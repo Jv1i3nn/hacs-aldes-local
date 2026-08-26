@@ -31,3 +31,9 @@ def api_module():
 def const_module():
     """Load constants without importing the Home Assistant package."""
     return _load_integration_module("const")
+
+
+@pytest.fixture(scope="session")
+def telemetry_module():
+    """Load telemetry helpers without importing Home Assistant package."""
+    return _load_integration_module("telemetry")
