@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-import time
 from datetime import UTC, datetime
 
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN, TELEMETRY_STALE_AFTER
 from .coordinator import AldesLocalCoordinator
+from .telemetry import telemetry_age, telemetry_is_stale
 
 
 class AldesLocalEntity(CoordinatorEntity[AldesLocalCoordinator]):
-    """Entity backed by fresh telemetry from Aldes Bridge."""
+    """Entity backed by telemetry from Aldes Bridge."""
 
     _attr_has_entity_name = True
 
@@ -28,18 +28,11 @@ class AldesLocalEntity(CoordinatorEntity[AldesLocalCoordinator]):
     @property
     def telemetry_age(self) -> float | None:
         """Return telemetry age in seconds."""
-        updated = self.coordinator.data.last_updated
-        return max(0, time.time() - updated) if updated is not None else None
+        return telemetry_age(self.coordinator.data.last_updated)
 
     @property
     def available(self) -> bool:
-        age = self.telemetry_age
-        return (
-            super().available
-            and self.coordinator.data.connected
-            and age is not None
-            and age <= TELEMETRY_STALE_AFTER
-        )
+        return super().available and self.coordinator.data.connected
 
     @property
     def extra_state_attributes(self):
@@ -53,4 +46,5 @@ class AldesLocalEntity(CoordinatorEntity[AldesLocalCoordinator]):
             "telemetry_age_seconds": (
                 round(self.telemetry_age) if self.telemetry_age is not None else None
             ),
+            "telemetry_stale": telemetry_is_stale(updated, TELEMETRY_STALE_AFTER),
         }
