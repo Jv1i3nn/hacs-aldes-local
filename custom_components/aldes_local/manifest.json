@@ -1,0 +1,12 @@
+{
+  "domain": "aldes_local",
+  "name": "Aldes Local",
+  "codeowners": ["@Jv1i3nn"],
+  "config_flow": true,
+  "documentation": "https://github.com/Jv1i3nn/hacs-aldes-local",
+  "integration_type": "hub",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/Jv1i3nn/hacs-aldes-local/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}
