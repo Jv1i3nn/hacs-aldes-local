@@ -55,7 +55,12 @@ async def test_get_device_parses_local_state(api_module):
                         "id": 2,
                         "current_temperature": 20.5,
                         "target_temperature": 21.0,
-                    }
+                    },
+                    {
+                        "id": 9,
+                        "current_temperature": 0,
+                        "target_temperature": 0,
+                    },
                 ],
             }
         )
@@ -71,16 +76,26 @@ async def test_get_device_parses_local_state(api_module):
     assert session.calls[0][2]["headers"] == {"Authorization": "Bearer secret"}
 
 
-async def test_set_zone_temperature_posts_expected_payload(api_module):
+async def test_set_zone_temperature_posts_whole_degree_payload(api_module):
     session = FakeSession(FakeResponse({"ok": True, "status": "sent"}))
     api = api_module.AldesLocalApi(session, "http://bridge:8080", "secret")
 
-    await api.async_set_zone_temperature(3, 21.5)
+    await api.async_set_zone_temperature(3, 21.0)
 
     method, url, kwargs = session.calls[0]
     assert method == "POST"
     assert url == "http://bridge:8080/api/local/zones/3/setpoint"
-    assert kwargs["json"] == {"temperature": 21.5}
+    assert kwargs["json"] == {"temperature": 21}
+
+
+async def test_set_zone_temperature_rejects_half_degree(api_module):
+    session = FakeSession(FakeResponse({"ok": True, "status": "sent"}))
+    api = api_module.AldesLocalApi(session, "http://bridge:8080", "secret")
+
+    with pytest.raises(ValueError, match="whole-degree"):
+        await api.async_set_zone_temperature(3, 21.5)
+
+    assert session.calls == []
 
 
 async def test_invalid_token_raises_authentication_error(api_module):

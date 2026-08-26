@@ -38,7 +38,8 @@ ainsi que la valeur de `ALDES_CLOUD2CLOUD_TOKEN`.
 
 - découverte des zones depuis l’API locale ;
 - température actuelle et consigne pour chaque zone ;
-- modification de la consigne par pas de `0,5 °C` ;
+- exclusion des zones inutilisées remontées à `0 °C` par la PAC ;
+- modification de la consigne par pas de `1 °C` entier ;
 - disponibilité liée à la connexion réelle de la PAC ;
 - aucune communication avec le cloud Aldes.
 
