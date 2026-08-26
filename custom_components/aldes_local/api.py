@@ -75,6 +75,7 @@ class AldesLocalApi:
                 target_temperature=zone.get("target_temperature"),
             )
             for zone in payload.get("zones", [])
+            if zone.get("current_temperature") not in (None, 0)
         )
         return AldesDevice(
             connected=bool(payload.get("connected")),
@@ -88,8 +89,10 @@ class AldesLocalApi:
         self, zone_id: int, temperature: float
     ) -> None:
         """Send a target temperature to Aldes Bridge."""
+        if not float(temperature).is_integer():
+            raise ValueError("Aldes only accepts whole-degree setpoints")
         await self._request(
             "POST",
             f"/api/local/zones/{zone_id}/setpoint",
-            json={"temperature": temperature},
+            json={"temperature": int(temperature)},
         )

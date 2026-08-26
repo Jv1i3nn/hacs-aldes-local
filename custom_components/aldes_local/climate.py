@@ -10,6 +10,7 @@ from homeassistant.components.climate import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -25,10 +26,21 @@ async def async_setup_entry(
 ) -> None:
     """Create one climate entity for each zone reported by Aldes Bridge."""
     coordinator = entry.runtime_data
-    async_add_entities(
+    entities = [
         AldesZoneClimate(coordinator, entry.entry_id, zone.zone_id)
         for zone in coordinator.data.zones
-    )
+    ]
+    valid_unique_ids = {entity.unique_id for entity in entities}
+    registry = er.async_get(hass)
+    for registry_entry in er.async_entries_for_config_entry(registry, entry.entry_id):
+        if (
+            registry_entry.domain == "climate"
+            and registry_entry.platform == DOMAIN
+            and registry_entry.unique_id.startswith(f"{entry.entry_id}_zone_")
+            and registry_entry.unique_id not in valid_unique_ids
+        ):
+            registry.async_remove(registry_entry.entity_id)
+    async_add_entities(entities)
 
 
 class AldesZoneClimate(CoordinatorEntity[AldesLocalCoordinator], ClimateEntity):
@@ -37,7 +49,7 @@ class AldesZoneClimate(CoordinatorEntity[AldesLocalCoordinator], ClimateEntity):
     _attr_has_entity_name = True
     _attr_name = None
     _attr_temperature_unit = UnitOfTemperature.CELSIUS
-    _attr_target_temperature_step = 0.5
+    _attr_target_temperature_step = 1
     _attr_min_temp = 5
     _attr_max_temp = 30
     _attr_supported_features = ClimateEntityFeature.TARGET_TEMPERATURE
