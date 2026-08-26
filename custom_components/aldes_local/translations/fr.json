@@ -1,0 +1,20 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Ce pont Aldes est déjà configuré"
+    },
+    "error": {
+      "cannot_connect": "Impossible de joindre Aldes Bridge",
+      "invalid_auth": "Token cloud2cloud invalide"
+    },
+    "step": {
+      "user": {
+        "data": {
+          "token": "Token cloud2cloud",
+          "url": "URL d’Aldes Bridge"
+        },
+        "description": "Connecte Home Assistant à l’API locale exposée par Aldes Bridge."
+      }
+    }
+  }
+}
