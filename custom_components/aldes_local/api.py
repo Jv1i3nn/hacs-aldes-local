@@ -38,6 +38,7 @@ class AldesDevice:
     air_mode: int | None
     water_mode: int | None
     zones: tuple[AldesZone, ...]
+    last_updated: float | None
 
 
 class AldesLocalApi:
@@ -83,6 +84,7 @@ class AldesLocalApi:
             air_mode=payload.get("air_mode"),
             water_mode=payload.get("water_mode"),
             zones=zones,
+            last_updated=payload.get("last_updated"),
         )
 
     async def async_set_zone_temperature(
@@ -96,3 +98,11 @@ class AldesLocalApi:
             f"/api/local/zones/{zone_id}/setpoint",
             json={"temperature": int(temperature)},
         )
+
+    async def async_set_air_mode(self, mode: str) -> None:
+        """Send an air mode code to Aldes Bridge."""
+        await self._request("POST", "/api/local/modes/air", json={"mode": mode})
+
+    async def async_set_water_mode(self, mode: str) -> None:
+        """Send a hot-water mode code to Aldes Bridge."""
+        await self._request("POST", "/api/local/modes/water", json={"mode": mode})

@@ -12,11 +12,11 @@ from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .api import AldesZone
 from .const import DOMAIN
 from .coordinator import AldesLocalCoordinator
+from .entity import AldesLocalEntity
 
 
 async def async_setup_entry(
@@ -43,7 +43,7 @@ async def async_setup_entry(
     async_add_entities(entities)
 
 
-class AldesZoneClimate(CoordinatorEntity[AldesLocalCoordinator], ClimateEntity):
+class AldesZoneClimate(AldesLocalEntity, ClimateEntity):
     """A locally controlled Aldes temperature zone."""
 
     _attr_has_entity_name = True
@@ -57,15 +57,9 @@ class AldesZoneClimate(CoordinatorEntity[AldesLocalCoordinator], ClimateEntity):
     def __init__(
         self, coordinator: AldesLocalCoordinator, entry_id: str, zone_id: int
     ) -> None:
-        super().__init__(coordinator)
+        super().__init__(coordinator, entry_id)
         self._zone_id = zone_id
         self._attr_unique_id = f"{entry_id}_zone_{zone_id}"
-        self._attr_device_info = {
-            "identifiers": {(DOMAIN, entry_id)},
-            "name": "Aldes",
-            "manufacturer": "Aldes",
-            "model": "Local bridge",
-        }
 
     @property
     def _zone(self) -> AldesZone | None:
@@ -88,11 +82,7 @@ class AldesZoneClimate(CoordinatorEntity[AldesLocalCoordinator], ClimateEntity):
 
     @property
     def available(self) -> bool:
-        return (
-            super().available
-            and self.coordinator.data.connected
-            and self._zone is not None
-        )
+        return super().available and self._zone is not None
 
     @property
     def hvac_mode(self) -> HVACMode:

@@ -41,13 +41,16 @@ ainsi que la valeur de `ALDES_CLOUD2CLOUD_TOKEN`.
 - exclusion des zones inutilisées remontées à `0 °C` par la PAC ;
 - modification de la consigne par pas de `1 °C` entier ;
 - disponibilité liée à la connexion réelle de la PAC ;
+- diagnostic de l'âge des télémétries et indisponibilité après 5 minutes sans donnée ;
+- sélection complète des modes air à partir de `UAM` ;
+- sélection des modes eau chaude à partir de `UDM` ;
 - aucune communication avec le cloud Aldes.
 
 ## État du projet
 
-Le projet est en développement initial. Les commandes de modes air, eau chaude et
-planning seront ajoutées lorsque leurs endpoints locaux seront disponibles dans Aldes
-Bridge.
+Le projet est en développement initial. Les consignes par zone et les modes air/eau
+chaude sont pilotables localement. La gestion des plannings sera ajoutée lorsqu'un
+contrat local stable sera disponible dans Aldes Bridge.
 
 ## Publier une version
 

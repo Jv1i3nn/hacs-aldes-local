@@ -11,7 +11,7 @@ from .api import AldesLocalApi
 from .const import CONF_TOKEN
 from .coordinator import AldesLocalCoordinator
 
-PLATFORMS = [Platform.CLIMATE]
+PLATFORMS = [Platform.CLIMATE, Platform.SELECT]
 type AldesLocalConfigEntry = ConfigEntry[AldesLocalCoordinator]
 
 
