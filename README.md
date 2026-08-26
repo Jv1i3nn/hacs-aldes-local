@@ -47,3 +47,14 @@ ainsi que la valeur de `ALDES_CLOUD2CLOUD_TOKEN`.
 Le projet est en développement initial. Les commandes de modes air, eau chaude et
 planning seront ajoutées lorsque leurs endpoints locaux seront disponibles dans Aldes
 Bridge.
+
+## Publier une version
+
+Le workflow GitHub Actions **Release** se déclenche manuellement depuis la branche
+`main`. Choisir un incrément `patch`, `minor` ou `major` met à jour la version du
+manifeste, crée le commit de version, pousse le tag `vX.Y.Z` et publie la GitHub Release
+avec des notes générées automatiquement.
+
+Le workflow pousse directement son commit sur `main`. Si la branche est protégée, les
+règles du dépôt doivent donc autoriser `github-actions[bot]` à effectuer cette mise à
+jour, ou prévoir une exception équivalente.
